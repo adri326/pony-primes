@@ -6,20 +6,37 @@ Prime functionalities library, it may become a proposal for the pony standard li
 
 primitive Prime
   fun is_prime[A: (Integer[A] val & Unsigned) = USize](num: A): Bool =>
-    if num == 2 then
+    if (num == 2) or (num == 3) then
       return true
     end
-    if (num <= 1) or ((num % 2) == 0) then
+    if (num <= 1) or ((num % 2) == 0) or ((num % 3) == 0) then
       return false
     end
-    var current: A = 3
-    while (current * current) <= num do
-      if (num % current) == 0 then
+    var current: A = 6
+    while ((current - 1) * (current - 1)) <= num do
+      if ((num % (current - 1)) == 0) or ((num % (current + 1)) == 0) then
         return false
       end
-      current = current + 2
+      current = current + 6
     end
     true
+
+  fun next_prime[A: (Integer[A] val & Unsigned) = USize](num: A): A =>
+    PrimeIterator[A].start_at(num).next()
+
+  fun prime_factors[A: (Integer[A] val & Unsigned) = USize](num: A): Array[A] ref =>
+    if Prime.is_prime[A](num) then return [num] end
+    var num' = num
+    let iterator = PrimeIterator[A]
+    var res = Array[A]
+    for divisor in iterator do
+      while (num' % divisor) == 0 do
+        num' = num' / divisor
+        res.push(divisor)
+      end
+      if (num' == 0) or (divisor > num') then break end
+    end
+    res
 
 class PrimeIterator[A: (Integer[A] val & Unsigned) = USize] is Iterator[A]
   var _last: A
