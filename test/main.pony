@@ -18,6 +18,8 @@ actor Main is TestList
     test(_TestPrimeFactorsStatic)
     test(_TestPrimeFactorsRandom)
     test(_TestPrimeIterator)
+    test(_TestGCDLCM)
+    test(_TestCoprime)
 
 class _TestPrimeTest is UnitTest
   // everyone should know them
@@ -57,12 +59,15 @@ class _TestNextPrime is UnitTest
 class _TestPrimeFactorsStatic is UnitTest
   fun name(): String => "prime/factors/static"
   fun apply(helper: TestHelper) =>
-    helper.assert_array_eq[USize](Prime.prime_factors(1), [])
-    helper.assert_array_eq[USize](Prime.prime_factors(2), [as USize: 2])
-    helper.assert_array_eq[USize](Prime.prime_factors(3), [as USize: 3])
-    helper.assert_array_eq[USize](Prime.prime_factors(4), [as USize: 2; 2])
-    helper.assert_array_eq[USize](Prime.prime_factors(162316), [as USize: 2; 2; 7; 11; 17; 31])
-    helper.assert_array_eq[USize](Prime.prime_factors(6469693230), [as USize: 2; 3; 5; 7; 11; 13; 17; 19; 23; 29])
+    helper.assert_array_eq[USize]([], Prime.prime_factors(1))
+    helper.assert_array_eq[USize]([as USize: 2], Prime.prime_factors(2))
+    helper.assert_array_eq[USize]([as USize: 3], Prime.prime_factors(3))
+    helper.assert_array_eq[USize]([as USize: 2; 2], Prime.prime_factors(4))
+    helper.assert_array_eq[USize]([as USize: 2; 2; 7; 11; 17; 31], Prime.prime_factors(162316))
+    helper.assert_array_eq[USize]([as USize: 2; 3; 5; 7; 11; 13; 17; 19; 23; 29], Prime.prime_factors(6469693230))
+    helper.assert_array_eq[USize]([as USize: 2; 3; 5; 7; 7; 17; 31; 31; 43; 47; 10007], Prime.prime_factors(485690777622330))
+    helper.assert_array_eq[U128]([as U128: 2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37; 41; 43; 47], Prime.prime_factors[U128](614889782588491410))
+    helper.assert_array_eq[U128]([as U128: 2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37; 41; 43; 47; 53; 59; 61; 67; 71; 73; 79; 83; 89; 97; 101], Prime.prime_factors[U128](232862364358497360900063316880507363070))
 
 class _TestPrimeFactorsRandom is UnitTest
   fun name(): String => "prime/factors/random"
@@ -106,3 +111,32 @@ class _TestPrimeIterator is UnitTest
       primes.push(value = iterator'.next())
     end
     helper.assert_array_eq[USize](primes_expected, primes, "PrimeIterator error!")
+
+class _TestGCDLCM is UnitTest
+  fun name(): String => "prime/gcd-lcm"
+
+  fun apply(helper: TestHelper) =>
+    helper.assert_eq[USize](21, Prime.gcd(1071, 462))
+    helper.assert_eq[USize](28, Prime.gcd(2156, 3220))
+    helper.assert_eq[USize](5, Prime.gcd(153215, 2100235))
+    helper.assert_eq[USize](16, Prime.gcd(16, 32))
+    helper.assert_eq[USize](1, Prime.gcd(2, 3))
+
+    helper.assert_eq[USize](23562, Prime.lcm(1071, 462))
+    helper.assert_eq[USize](247940, Prime.lcm(2156, 3220))
+    helper.assert_eq[USize](64357501105, Prime.lcm(153215, 2100235))
+    helper.assert_eq[USize](32, Prime.lcm(16, 32))
+    helper.assert_eq[USize](6, Prime.lcm(2, 3))
+
+class _TestCoprime is UnitTest
+  fun name(): String => "prime/coprime"
+
+  fun apply(helper: TestHelper) =>
+    helper.assert_true(Prime.is_coprime(1, 1))
+    helper.assert_true(Prime.is_coprime(1, 2))
+    helper.assert_true(Prime.is_coprime(2, 3))
+    helper.assert_true(Prime.is_coprime(3, 5))
+    helper.assert_true(Prime.is_coprime(7, 12))
+    helper.assert_false(Prime.is_coprime(2, 6))
+    helper.assert_false(Prime.is_coprime(3, 93))
+    helper.assert_false(Prime.is_coprime(12, 93))
