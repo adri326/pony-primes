@@ -131,7 +131,7 @@ class PrimeIterator[A: (Integer[A] val & Unsigned) = USize] is Iterator[A]
     _last = 1
     _limit = limit
 
-  new start_at(last: A = 1, limit: A = A.max_value()) =>
+  new start_at(starting_value: A = 1, limit: A = A.max_value()) =>
     """
     Begin at a particular value, allowing for calculation of primes up from a number
 
@@ -140,7 +140,11 @@ class PrimeIterator[A: (Integer[A] val & Unsigned) = USize] is Iterator[A]
       env.out.print(iterator.next().string()) // 10007
     ```
     """
-    _last = if (last % 2) == 0 then last - 1 else last end
+    _last = if (starting_value % 2) == 0 then
+      starting_value - 1 // it isn't an issue if it already is 0
+    else
+      starting_value
+    end
     _limit = limit
 
   fun has_next(): Bool => _last < _limit
