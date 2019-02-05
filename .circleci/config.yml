@@ -1,0 +1,8 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: ponylang/ponyc:release
+    steps:
+      - checkout
+      - run: make test-ci
